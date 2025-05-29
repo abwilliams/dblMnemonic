@@ -38,12 +38,16 @@ def main():
     args = parser.parse_args()
     logging.info(f"main() entered with arguments...\n '{args}',\n language '{args.language}' and..\n seed phrase length '{args.sp_length}'.")
 
-
-
     ''' 
     TODO
-        Use pwd type command - os.getcwd()
+        XXX
     '''
+    mnem = Mnemonic("english")
+    mnemonic_phrase = mnem.generate(strength=256)
+    print("Mnemonic Phrase:", mnemonic_phrase)
+
+    is_valid = mnem.check(mnemonic_phrase)
+    print("Is valid:", is_valid)
 
     logging.info("Program terminated successfully.")
 

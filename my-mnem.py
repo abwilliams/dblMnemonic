@@ -62,14 +62,20 @@ def main():
 
     double_phrase = phrase1 + " " + phrase2
     is_valid = mnem.check(double_phrase)
-    print("Is the double phrase valid?:", is_valid)
+    print("Is the double phrase valid? :", is_valid)
 
-
-    # valid = False
-    # while (!valid):
-    #        seed2 = mnem.generate(strength=128)
-    #        double = mnemonic_phrase + 
+    attempts = 0
+    valid = False
+    while ( not valid ):
+           phrase2 = mnem.generate(strength=128)
+           double_phrase = phrase1 + " " + phrase2
+           attempts = attempts + 1
+           valid = mnem.check(double_phrase)
            
+# Change the algo to look for the last word of the last seed rather than the whole 12 words.
+
+    print(f"...\nAfter {attempts} attempt(s), a valid double mnemonic phrase is : -\n {phrase1} \n {phrase2} \n...")
+
 
     logging.info("Program terminated successfully.")
 

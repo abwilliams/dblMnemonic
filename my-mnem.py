@@ -40,14 +40,36 @@ def main():
 
     ''' 
     TODO
-        XXX
+        Segregate Argument Parser into it's own module.
+        Test arguments for valid and differen languages.
     '''
     mnem = Mnemonic("english")
-    mnemonic_phrase = mnem.generate(strength=256)
+    mnemonic_phrase = mnem.generate(strength=128)
     print("Mnemonic Phrase:", mnemonic_phrase)
 
     is_valid = mnem.check(mnemonic_phrase)
     print("Is valid:", is_valid)
+
+    seed = mnem.to_seed(mnemonic_phrase, passphrase="")
+    print("Seed:", seed.hex())
+
+    phrase1 = mnemonic_phrase
+    phrase2 = mnem.generate(128)
+
+    print(f"Phrase2 = {phrase2}")
+
+    print(f"The double phrase = {phrase1 + " " + phrase2}")
+
+    double_phrase = phrase1 + " " + phrase2
+    is_valid = mnem.check(double_phrase)
+    print("Is the double phrase valid?:", is_valid)
+
+
+    # valid = False
+    # while (!valid):
+    #        seed2 = mnem.generate(strength=128)
+    #        double = mnemonic_phrase + 
+           
 
     logging.info("Program terminated successfully.")
 

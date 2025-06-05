@@ -11,12 +11,6 @@ import logging
 import argparse
 from mnemonic import Mnemonic
 
-# from modules.module1 import get_word_list
-# # from modules.module2 import class_from_module2
-# from modules.module1 import get_random
-# import requests     # TESTING ONLY
-# import json         # TESTING ONLY
-
 # initialise logging - INFO, WARNING, ERROR, CRITICAL
 logging.basicConfig(
     level=logging.INFO,
@@ -26,56 +20,60 @@ logging.basicConfig(
 
 def main():
     """
-    This is the main function of the program.
-    This program loads the word list and creates the pass phrase.
+    This is the main function and entry-point of the program.
+    This program creates a mnemonic object with the specified language and attempts to
+    find a 24 word double 12 word pass phrase.
     Returns : none
     """
     logging.info("Program started.\n")
 
     parser = argparse.ArgumentParser(description="Create a Bitcoin pass phrase.")
-    parser.add_argument('language', help='Word list languagr file to be used.', type=str)
+    parser.add_argument('language', help='Word list language file to be used.', type=str)
     parser.add_argument('sp_length', help='Number of words in seed phrase 12|24', type=int)
     args = parser.parse_args()
-    logging.info(f"main() entered with arguments...\n '{args}',\n language '{args.language}' and..\n seed phrase length '{args.sp_length}'.")
+    logging.info(f"main() entered with arguments...\n '{args}',\n language '{args.language}' and..\n seed phrase length '{args.sp_length}'.\n")
 
     ''' 
     TODO
         Segregate Argument Parser into it's own module.
-        Test arguments for valid and differen languages.
+        Correctly impliment the passing of the command line arguments to main()
+        Test arguments for valid and different languages.
+        Change the description of the command-line arguments.
+        Display the fingerprint of each seed phrase.
     '''
+    
     mnem = Mnemonic("english")
+    # Assumes all Mnemonic() generated seed phrases are valid
+    # Change the algo to look for the last word of the last seed rather than the whole 12 words.
+
     phrase1 = mnem.generate(strength=128)
-
-    phrase2 = mnem.generate(128)
-
-    print(f"Phrase2 = {phrase2}")
-
-    print(f"The double phrase = {phrase1 + " " + phrase2}")
-
-    double_phrase = phrase1 + " " + phrase2
-    is_valid = mnem.check(double_phrase)
-    print("Is the double phrase valid? :", is_valid)
-
     attempts = 0
     valid = False
     while ( not valid ):
+           attempts = attempts + 1
            phrase2 = mnem.generate(strength=128)
            double_phrase = phrase1 + " " + phrase2
-           attempts = attempts + 1
            valid = mnem.check(double_phrase)
-           
-# Change the algo to look for the last word of the last seed rather than the whole 12 words.
 
-    print(f"...\nAfter {attempts} attempt(s), a valid double mnemonic phrase is : -\n {phrase1} \n {phrase2} \n...")
+    seed_one = mnem.to_seed(double_phrase, passphrase="")
+    seed_two = mnem.to_seed(double_phrase, passphrase="")
+    seed_dbl = mnem.to_seed(double_phrase, passphrase="")
 
+    print(f"Seed phrase 1 = {phrase1}")
+    print(f"Seed: {seed_one.hex()} .")
+    print(f"Fingerprint: XXXX \n")
 
+    print(f"Seed phrase 2 = {phrase2}")
+    print(f"Seed: {seed_two.hex()} .")
+    print(f"Fingerprint: XXXX \n")
 
+    print(f"Double seed phrase = {double_phrase}")
+    print(f"Seed: {seed_dbl.hex()} .")
+    print(f"Fingerprint: XXXX \n")
 
-    seed = mnem.to_seed(double_phrase, passphrase="")
-    print("Seed:", seed.hex())
-
-
-
+    is_valid = mnem.check(double_phrase)
+    print(f"The double phrase is valid. : {is_valid} ")
+    print(f"{attempts} attempt(s) were made.\n")
 
     logging.info("Program terminated successfully.")
 

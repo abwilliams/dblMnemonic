@@ -44,16 +44,8 @@ def main():
         Test arguments for valid and differen languages.
     '''
     mnem = Mnemonic("english")
-    mnemonic_phrase = mnem.generate(strength=128)
-    print("Mnemonic Phrase:", mnemonic_phrase)
+    phrase1 = mnem.generate(strength=128)
 
-    is_valid = mnem.check(mnemonic_phrase)
-    print("Is valid:", is_valid)
-
-    seed = mnem.to_seed(mnemonic_phrase, passphrase="")
-    print("Seed:", seed.hex())
-
-    phrase1 = mnemonic_phrase
     phrase2 = mnem.generate(128)
 
     print(f"Phrase2 = {phrase2}")
@@ -75,6 +67,14 @@ def main():
 # Change the algo to look for the last word of the last seed rather than the whole 12 words.
 
     print(f"...\nAfter {attempts} attempt(s), a valid double mnemonic phrase is : -\n {phrase1} \n {phrase2} \n...")
+
+
+
+
+    seed = mnem.to_seed(double_phrase, passphrase="")
+    print("Seed:", seed.hex())
+
+
 
 
     logging.info("Program terminated successfully.")

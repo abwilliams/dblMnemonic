@@ -55,10 +55,10 @@ def main():
            double_phrase = phrase1 + " " + phrase2
            valid = mnem.check(double_phrase)
 
-    seed_one = mnem.to_seed(double_phrase, passphrase="")
-    seed_two = mnem.to_seed(double_phrase, passphrase="")
+    seed_one = mnem.to_seed(phrase1, passphrase="")
+    seed_two = mnem.to_seed(phrase2, passphrase="")
     seed_dbl = mnem.to_seed(double_phrase, passphrase="")
-
+    
     print(f"Seed phrase 1 = {phrase1}")
     print(f"Seed: {seed_one.hex()} .")
     print(f"Fingerprint: XXXX \n")

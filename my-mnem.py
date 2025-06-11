@@ -10,6 +10,8 @@ main() is the entry point for the project.
 import logging
 import argparse
 from mnemonic import Mnemonic
+import hashlib
+import hmac
 
 # initialise logging - INFO, WARNING, ERROR, CRITICAL
 logging.basicConfig(
@@ -17,6 +19,24 @@ logging.basicConfig(
     format='%(asctime)s -%(levelname)s - %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S'
 )
+
+# Calculate the fingerprint (pass the seed phrase and the passphrase).
+def calculate_fingerprint(sp, pp=""):
+    # Concatenate the seed phrase and passphrase with a separator
+    data = sp + "\n" + pp
+    logging.info(f"FP DATA = {data}\n")
+    # Hash the data with SHA-256
+    sha256_hash = hashlib.sha256(data.encode('utf-8')).digest()
+    logging.info(f"256HASH = {sha256_hash}\n")
+    # Create the key for HMAC
+    key = ("mnemonic" + pp).encode('utf-8')
+    logging.info(f"KEY = {key}\n")
+    # Hash the SHA-256 hash with HMAC-SHA512
+    hmac_hash = hmac.new(key, sha256_hash, hashlib.sha512).digest()
+    logging.info(f"HMAC HASH = {hmac_hash}\n")
+    # Extract the first 4 bytes as the fingerprint
+    fingerprint = hmac_hash[:4]
+    return fingerprint.hex()
 
 def main():
     """
@@ -44,7 +64,8 @@ def main():
     
     mnem = Mnemonic("english")
     # Assumes all Mnemonic() generated seed phrases are valid
-    # Change the algo to look for the last word of the last seed rather than the whole 12 words.
+    # Change the algorythim to look for the last word of the 
+    # last seed rather than recreate the whole 12 words (brute force).
 
     phrase1 = mnem.generate(strength=128)
     attempts = 0
@@ -58,7 +79,12 @@ def main():
     seed_one = mnem.to_seed(phrase1, passphrase="")
     seed_two = mnem.to_seed(phrase2, passphrase="")
     seed_dbl = mnem.to_seed(double_phrase, passphrase="")
-    
+
+    # Hash the data with SHA-256
+    # sha256_hash = hashlib.sha256(seed_one.encode('utf-8')).digest()
+    fp1 = calculate_fingerprint(phrase1)
+    print (f"FINGER PRINT ONE IS {fp1}\n")
+
     print(f"Seed phrase 1 = {phrase1}")
     print(f"Seed: {seed_one.hex()} .")
     print(f"Fingerprint: XXXX \n")

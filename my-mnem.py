@@ -20,22 +20,19 @@ logging.basicConfig(
     datefmt='%Y-%m-%d %H:%M:%S'
 )
 
-# Calculate the fingerprint (pass the seed phrase and the passphrase).
-def calculate_fingerprint(sp, pp=""):
-    # Concatenate the seed phrase and passphrase with a separator
-    data = sp + "\n" + pp
-    logging.info(f"FP DATA = {data}\n")
-    # Hash the data with SHA-256
-    sha256_hash = hashlib.sha256(data.encode('utf-8')).digest()
-    logging.info(f"256HASH = {sha256_hash}\n")
-    # Create the key for HMAC
-    key = ("mnemonic" + pp).encode('utf-8')
-    logging.info(f"KEY = {key}\n")
-    # Hash the SHA-256 hash with HMAC-SHA512
-    hmac_hash = hmac.new(key, sha256_hash, hashlib.sha512).digest()
-    logging.info(f"HMAC HASH = {hmac_hash}\n")
-    # Extract the first 4 bytes as the fingerprint
-    fingerprint = hmac_hash[:4]
+def calc_fingerprint(sp, pp=""):
+    '''
+    Calculate the fingerprint of a mnemonic given the seed phrase
+    and the passphrase. Returns the fingerprint in hex (4 bytes).
+    '''
+    data = sp + "\n" + pp       # Concatenate seed phrase + passphrase with separator
+    key = ("mnemonic" + pp).encode('utf-8')   # Create the key
+
+    sha256_hash = hashlib.sha256(data.encode('utf-8')).digest()     # SHA256 hash of data
+    hmac_hash = hmac.new(key, sha256_hash, hashlib.sha512).digest() # hash of data and key
+
+    fingerprint = hmac_hash[:4]         # Extract the first 4 bytes as the fingerprint
+
     return fingerprint.hex()
 
 def main():
@@ -45,7 +42,6 @@ def main():
     find a 24 word double 12 word pass phrase.
     Returns : none
     """
-    logging.info("Program started.\n")
 
     parser = argparse.ArgumentParser(description="Create a Bitcoin pass phrase.")
     parser.add_argument('language', help='Word list language file to be used.', type=str)
@@ -56,14 +52,15 @@ def main():
     ''' 
     TODO
         Segregate Argument Parser into it's own module.
+        Segregate fingerprint calculator into it's own module.
         Correctly impliment the passing of the command line arguments to main()
-        Test arguments for valid and different languages.
+        Test arguments for validity and impliment different languages.
         Change the description of the command-line arguments.
-        Display the fingerprint of each seed phrase.
+        Improve algorythim to look for the last word of the last seed rather than brute force the whole 12 words.
     '''
     
-    mnem = Mnemonic("english")
-    # Assumes all Mnemonic() generated seed phrases are valid
+    mnem = Mnemonic("english")      # Assumes all generated seed phrases are valid.
+
     # Change the algorythim to look for the last word of the 
     # last seed rather than recreate the whole 12 words (brute force).
 
@@ -73,32 +70,29 @@ def main():
     while ( not valid ):
            attempts = attempts + 1
            phrase2 = mnem.generate(strength=128)
-           double_phrase = phrase1 + " " + phrase2
-           valid = mnem.check(double_phrase)
+           phrase_dbl = phrase1 + " " + phrase2
+           valid = mnem.check(phrase_dbl)
 
     seed_one = mnem.to_seed(phrase1, passphrase="")
     seed_two = mnem.to_seed(phrase2, passphrase="")
-    seed_dbl = mnem.to_seed(double_phrase, passphrase="")
+    seed_dbl = mnem.to_seed(phrase_dbl, passphrase="")
 
-    # Hash the data with SHA-256
-    # sha256_hash = hashlib.sha256(seed_one.encode('utf-8')).digest()
-    fp1 = calculate_fingerprint(phrase1)
-    print (f"FINGER PRINT ONE IS {fp1}\n")
+    fp1 = calc_fingerprint(phrase1)
+    fp2 = calc_fingerprint(phrase2)
+    fpd = calc_fingerprint(phrase_dbl)
 
     print(f"Seed phrase 1 = {phrase1}")
     print(f"Seed: {seed_one.hex()} .")
-    print(f"Fingerprint: XXXX \n")
+    print(f"Fingerprint: {fp1} \n")
 
     print(f"Seed phrase 2 = {phrase2}")
     print(f"Seed: {seed_two.hex()} .")
-    print(f"Fingerprint: XXXX \n")
+    print(f"Fingerprint: {fp2} \n")
 
-    print(f"Double seed phrase = {double_phrase}")
+    print(f"Double seed phrase = {phrase_dbl}")
     print(f"Seed: {seed_dbl.hex()} .")
-    print(f"Fingerprint: XXXX \n")
+    print(f"Fingerprint: {fpd} \n")
 
-    is_valid = mnem.check(double_phrase)
-    print(f"The double phrase is valid. : {is_valid} ")
     print(f"{attempts} attempt(s) were made.\n")
 
     logging.info("Program terminated successfully.")

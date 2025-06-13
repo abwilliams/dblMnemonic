@@ -3,10 +3,8 @@
 # my-mnem.py
 """
 My mnemonic
-Test of the python 'mnemonic' library
 main() is the entry point for the project.
 """
-
 import logging
 import argparse
 from mnemonic import Mnemonic
@@ -19,6 +17,26 @@ logging.basicConfig(
     format='%(asctime)s -%(levelname)s - %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S'
 )
+
+language_list = [("en", "english"), ("es", "spanish"), ("fr", "french"), ("jp", "japanese"),
+                 ("kr", "korean"), ("cn", "chinese_simplified"), ("zh", "chinese_traditional"), 
+                 ("it", "italian"), ("cz", "czech"), ("pt", "portuguese"), ("ru", "russian")]
+# iso_list = ['en', "es", "fr", "jp", "kr", "cn", "zh", "it", "cz", "cz", "pt", "ru"]
+sp_length_list = [12, 24]
+# language = "english"
+iso_code = "en"
+sp_length = 12
+
+def check_list(selection, item_list):
+    # return item in item_list
+    # selection = args.language
+    for selection, language in item_list :
+        if (iso_code == selection): 
+            logging.info(f"ISO code : {iso_code}")
+            return language
+        else :
+            None
+
 
 def calc_fingerprint(sp, pp=""):
     '''
@@ -47,6 +65,7 @@ def main():
     parser.add_argument('language', help='Word list language file to be used.', type=str)
     parser.add_argument('sp_length', help='Number of words in seed phrase 12|24', type=int)
     args = parser.parse_args()
+   
     logging.info(f"main() entered with arguments...\n '{args}',\n language '{args.language}' and..\n seed phrase length '{args.sp_length}'.\n")
 
     ''' 
@@ -58,8 +77,15 @@ def main():
         Change the description of the command-line arguments.
         Improve algorythim to look for the last word of the last seed rather than brute force the whole 12 words.
     '''
-    
-    mnem = Mnemonic("english")      # Assumes all generated seed phrases are valid.
+    # if (not check_list(language, language_list)):
+    #      logging.info(f"Selected language failure : - {language}")
+    #      exit()
+    language = check_list(args.language, language_list)
+    logging.info(f"The checked and parsed language is ==> {language} <==")
+
+
+
+    mnem = Mnemonic(language)      # Assumes all generated seed phrases are valid.
 
     # Change the algorythim to look for the last word of the 
     # last seed rather than recreate the whole 12 words (brute force).

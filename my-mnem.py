@@ -24,14 +24,14 @@ language_list = [("en", "english"), ("es", "spanish"), ("fr", "french"), ("jp", 
 # iso_list = ['en', "es", "fr", "jp", "kr", "cn", "zh", "it", "cz", "cz", "pt", "ru"]
 sp_length_list = [12, 24]
 # language = "english"
-iso_code = "en"
+# iso_code = "en"
 sp_length = 12
 
 def check_list(selection, item_list):
     # return item in item_list
     # selection = args.language
-    for selection, language in item_list :
-        if (iso_code == selection): 
+    for iso_code, language in item_list :
+        if (selection == iso_code): 
             logging.info(f"ISO code : {iso_code}")
             return language
         else :

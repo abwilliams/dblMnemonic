@@ -21,10 +21,9 @@ logging.basicConfig(
 language_list = [("en", "english"), ("es", "spanish"), ("fr", "french"), ("jp", "japanese"),
                  ("kr", "korean"), ("cn", "chinese_simplified"), ("zh", "chinese_traditional"), 
                  ("it", "italian"), ("cz", "czech"), ("pt", "portuguese"), ("ru", "russian")]
-# iso_list = ['en', "es", "fr", "jp", "kr", "cn", "zh", "it", "cz", "cz", "pt", "ru"]
+
 sp_length_list = [12, 24]
-# language = "english"
-# iso_code = "en"
+
 sp_length = 12
 
 def check_list(selection, item_list):
@@ -77,13 +76,9 @@ def main():
         Change the description of the command-line arguments.
         Improve algorythim to look for the last word of the last seed rather than brute force the whole 12 words.
     '''
-    # if (not check_list(language, language_list)):
-    #      logging.info(f"Selected language failure : - {language}")
-    #      exit()
+
     language = check_list(args.language, language_list)
     logging.info(f"The checked and parsed language is ==> {language} <==")
-
-
 
     mnem = Mnemonic(language)      # Assumes all generated seed phrases are valid.
 

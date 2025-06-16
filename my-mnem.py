@@ -22,9 +22,8 @@ language_list = [("en", "english"), ("es", "spanish"), ("fr", "french"), ("jp", 
                  ("kr", "korean"), ("cn", "chinese_simplified"), ("zh", "chinese_traditional"), 
                  ("it", "italian"), ("cz", "czech"), ("pt", "portuguese"), ("ru", "russian")]
 
-sp_length_list = [12, 24]
-
-sp_length = 12
+sp_length_list = [12, 24]   # Redundant code
+sp_length = 12              # Redundant code when main() has single argument.
 
 def check_list(selection, item_list):
     ''' 
@@ -33,11 +32,9 @@ def check_list(selection, item_list):
     '''
     for item, language in item_list :
         if (selection == item): 
-            logging.info(f"ISO code : {item}")
             return language
         else :
             None
-
 
 def calc_fingerprint(sp, pp=""):
     '''
@@ -50,7 +47,7 @@ def calc_fingerprint(sp, pp=""):
     sha256_hash = hashlib.sha256(data.encode('utf-8')).digest()     # SHA256 hash of data
     hmac_hash = hmac.new(key, sha256_hash, hashlib.sha512).digest() # hash of data and key
 
-    fingerprint = hmac_hash[:4]         # Extract the first 4 bytes as the fingerprint
+    fingerprint = hmac_hash[:4] # Extract the first 4 bytes as the fingerprint
 
     return fingerprint.hex()
 
@@ -67,13 +64,13 @@ def main():
     parser.add_argument('sp_length', help='Number of words in seed phrase 12|24', type=int)
     args = parser.parse_args()
    
-    logging.info(f"main() entered with arguments...\n '{args}',\n language '{args.language}' and..\n seed phrase length '{args.sp_length}'.\n")
+    # logging.info(f"main() entered with arguments...\n '{args}',\n language '{args.language}' and..\n seed phrase length '{args.sp_length}'.\n")
 
     ''' 
     TODO
         Segregate Argument Parser into it's own module.
         Segregate fingerprint calculator into it's own module.
-        Correctly impliment the passing of the command line arguments to main()
+        Correct README.md to represent current status! <== **important**.
         Remove second argument. It must always have a seed word length 12 for a 24 word double mnemonic!
         Change the description of the command-line arguments.
         Possibly improve algorythim to look for the last word of the last seed rather than brute force 
@@ -81,7 +78,7 @@ def main():
     '''
 
     language = check_list(args.language, language_list)
-    logging.info(f"The checked and parsed language is ==> {language} <==")
+    logging.info(f"\tThe checked and parsed language is ==> {language} <==")
 
     mnem = Mnemonic(language)      # Assumes all generated seed phrases are valid.
 
@@ -104,17 +101,17 @@ def main():
 
     print(f"Seed phrase 1 = {phrase1}")
     print(f"Seed: {seed_one.hex()} .")
-    print(f"Fingerprint: {fp1} \n")
+    print(f"\tFingerprint: {fp1} \n")
 
     print(f"Seed phrase 2 = {phrase2}")
     print(f"Seed: {seed_two.hex()} .")
-    print(f"Fingerprint: {fp2} \n")
+    print(f"\tFingerprint: {fp2} \n")
 
     print(f"Double seed phrase = {phrase_dbl}")
     print(f"Seed: {seed_dbl.hex()} .")
-    print(f"Fingerprint: {fpd} \n")
+    print(f"\tFingerprint: {fpd} \n")
 
-    print(f"{attempts} attempt(s) were made.\n")
+    print(f"\t\t\t{attempts} attempt(s) were made.\n")
 
     logging.info("Program terminated successfully.")
 

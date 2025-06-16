@@ -27,11 +27,13 @@ sp_length_list = [12, 24]
 sp_length = 12
 
 def check_list(selection, item_list):
-    # return item in item_list
-    # selection = args.language
-    for iso_code, language in item_list :
-        if (selection == iso_code): 
-            logging.info(f"ISO code : {iso_code}")
+    ''' 
+    Returns the item in item_list that matches selection.
+    Returns None if not found 
+    '''
+    for item, language in item_list :
+        if (selection == item): 
+            logging.info(f"ISO code : {item}")
             return language
         else :
             None
@@ -72,18 +74,16 @@ def main():
         Segregate Argument Parser into it's own module.
         Segregate fingerprint calculator into it's own module.
         Correctly impliment the passing of the command line arguments to main()
-        Test arguments for validity and impliment different languages.
+        Remove second argument. It must always have a seed word length 12 for a 24 word double mnemonic!
         Change the description of the command-line arguments.
-        Improve algorythim to look for the last word of the last seed rather than brute force the whole 12 words.
+        Possibly improve algorythim to look for the last word of the last seed rather than brute force 
+        the whole 12 words (or retain because it improves randomness!).
     '''
 
     language = check_list(args.language, language_list)
     logging.info(f"The checked and parsed language is ==> {language} <==")
 
     mnem = Mnemonic(language)      # Assumes all generated seed phrases are valid.
-
-    # Change the algorythim to look for the last word of the 
-    # last seed rather than recreate the whole 12 words (brute force).
 
     phrase1 = mnem.generate(strength=128)
     attempts = 0

@@ -1,0 +1,16 @@
+/target
+**/*.rs.bk
+Cargo.lock
+bin/
+pkg/
+wasm-pack.log
+.DS_Store
+__pycache__/
+.nova
+.vscode
+.idea
+.coverage*
+.venv
+*.po
+*.mo
+old-*

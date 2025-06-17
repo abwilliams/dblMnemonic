@@ -22,7 +22,7 @@ language_list = [("en", "english"), ("es", "spanish"), ("fr", "french"), ("jp", 
                  ("kr", "korean"), ("cn", "chinese_simplified"), ("zh", "chinese_traditional"), 
                  ("it", "italian"), ("cz", "czech"), ("pt", "portuguese"), ("ru", "russian")]
 
-sp_length_list = [12, 24]   # Redundant code
+# sp_length_list = [12, 24]   # Redundant code
 sp_length = 12              # Redundant code when main() has single argument.
 
 def check_list(selection, item_list):
@@ -60,8 +60,8 @@ def main():
     """
 
     parser = argparse.ArgumentParser(description="Create a Bitcoin pass phrase.")
-    parser.add_argument('language', help='Word list language file to be used.', type=str)
-    parser.add_argument('sp_length', help='Number of words in seed phrase 12|24', type=int)
+    parser.add_argument('language', help='Language to be used [cn|cz|en|es|fr|it|jp|kr|pr|ru|zh].', type=str)
+    # parser.add_argument('sp_length', help='Number of words in seed phrase 12|24', type=int)
     args = parser.parse_args()
    
     # logging.info(f"main() entered with arguments...\n '{args}',\n language '{args.language}' and..\n seed phrase length '{args.sp_length}'.\n")
@@ -78,7 +78,7 @@ def main():
     '''
 
     language = check_list(args.language, language_list)
-    logging.info(f"\tThe checked and parsed language is ==> {language} <==")
+    logging.info(f"The checked and parsed language is ==> {language} <==\n")
 
     mnem = Mnemonic(language)      # Assumes all generated seed phrases are valid.
 

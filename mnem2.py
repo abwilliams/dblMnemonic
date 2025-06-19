@@ -4,12 +4,24 @@
 """
 My mnemonic
 main() is the entry point for the project.
+This code is based around the *bip_utils* library
 """
 import logging
 import argparse
 from mnemonic import Mnemonic
 import hashlib
 import hmac
+from bip_utils import Bip39MnemonicGenerator, Bip39SeedGenerator, Bip39WordsNum, Bip39Languages
+
+'''
+# Generate mnemonic
+mnemonic = Bip39MnemonicGenerator().FromWordsNumber(Bip39WordsNum.WORDS_NUM_12)
+
+# Convert to seed
+seed_bytes = Bip39SeedGenerator(mnemonic).Generate(passphrase="")
+
+'''
+
 
 # initialise logging - INFO, WARNING, ERROR, CRITICAL
 logging.basicConfig(

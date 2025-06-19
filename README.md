@@ -15,27 +15,16 @@
     └── requirements.txt        # list of python packages
  
 
-    Call unit tests with :
-        $ python -m unittest discover -s tests
+    Call unit tests with :           $ python -m unittest discover -s tests
+    Call python program with :       $ python main.py    or    $ ./main.py
+    Create 'requirements.txt' with : $ point freeze > requirements.txt
+    Install requirements with :      $ pip install -r requirements.txt 
+    Create virtual environmnent :    $ python -m venv .venv
+    Activate virtual environmnent :  $ source venv/bin/activate
 
-    Call python program with :
-        $ python main.py 
-
-    Create 'requirements.txt' with :
-        $ point freeze > requirements.txt
-
-    Install requirements with :
-        $ pip install -r requirements.txt 
-
-    Create virtual environmnent :
-        $ python -m venv .venv
-
-    Activate virtual environmnent
-        $ source venv/bin/activate
-
-    All calls made from the project root directory myBIP39tools/
+    All calls made from the project root directory.
 
 
-The BIP39 English Seed words were sourced from : -
+BIP39 English Seed words can be sourced from : -
     https://raw.githubusercontent.com/bitcoin/bips/refs/heads/master/bip-0039/english.txt
 

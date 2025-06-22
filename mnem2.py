@@ -8,7 +8,6 @@ This code is based around the *bip_utils* library
 """
 import logging
 import argparse
-# from mnemonic import Mnemonic
 import hashlib
 import hmac
 from bip_utils import Bip39MnemonicGenerator, Bip39SeedGenerator, Bip39WordsNum, Bip39Languages, Bip39MnemonicValidator
@@ -20,9 +19,29 @@ logging.basicConfig(
     datefmt='%Y-%m-%d %H:%M:%S'
 )
 
-language_list = [("en", "english"), ("es", "spanish"), ("fr", "french"), ("jp", "japanese"),
-                 ("kr", "korean"), ("cn", "chinese_simplified"), ("zh", "chinese_traditional"), 
-                 ("it", "italian"), ("cz", "czech"), ("pt", "portuguese"), ("ru", "russian")]
+# language_list = [("en", "english"), ("es", "spanish"), ("fr", "french"), ("jp", "japanese"),
+#                  ("kr", "korean"), ("cn", "chinese_simplified"), ("zh", "chinese_traditional"), 
+#                  ("it", "italian"), ("cz", "czech"), ("pt", "portuguese"), ("ru", "russian")]
+language_list = [("en", "ENGLISH"), ("es", "SPANISH"), ("fr", "FRENCH"), ("jp", "JAPANESE"),
+                 ("kr", "KOREAN"), ("cn", "CHINESE_SIMPLIFIED"), ("zh", "CHINESE_TRADITIONAL"), 
+                 ("it", "ITALIAN"), ("cz", "CZECH"), ("pt", "PORTUGESE"), ("ru", "RUSSIAN")]
+
+language_map = {
+    "en": Bip39Languages.ENGLISH,
+    "es": Bip39Languages.SPANISH,
+    "fr": Bip39Languages.FRENCH,
+    # "jp": Bip39Languages.JAPANESE,
+    "kr": Bip39Languages.KOREAN,
+    "cn": Bip39Languages.CHINESE_SIMPLIFIED,
+    "zh": Bip39Languages.CHINESE_TRADITIONAL,
+    "it": Bip39Languages.ITALIAN,
+    "cz": Bip39Languages.CZECH,
+    "pt": Bip39Languages.PORTUGUESE,
+    # "ru": Bip39Languages.RUSSIAN
+}
+
+
+
 
 def check_list(selection, item_list):
     ''' 
@@ -57,22 +76,25 @@ def main():
     parser = argparse.ArgumentParser(description="Create a Bitcoin pass phrase.")
     parser.add_argument('language', help='Language to be used [cn|cz|en|es|fr|it|jp|kr|pr|ru|zh].', type=str)
     args = parser.parse_args()
-   
-    language = check_list(args.language, language_list)
-    logging.info(f"The checked and parsed language requested is ==> {language} <==\n")
-    # entropy = 128                  # 128 bit represents 12 seed words
-    # mnem = Mnemonic(language)      # Assumes all generated seed phrases are valid.
 
-    obj_mnem1 = Bip39MnemonicGenerator().FromWordsNumber(Bip39WordsNum.WORDS_NUM_12)
+    language = language_map.get(args.language.lower())
+    if language is None:
+        logging.error(f"Invalid language code: {args.language}")
+        return
+
+    obj_mnem1 = Bip39MnemonicGenerator(language).FromWordsNumber(Bip39WordsNum.WORDS_NUM_12)
     str_mnem1 = obj_mnem1.ToStr()
 
     attempts = 0
     validator = Bip39MnemonicValidator()
 
+    '''
+    Keep cycling through attempts until a valid 12 word seed that matches the first (str_mnem1) is found.
+    '''
     valid = False
     while ( not valid ):
         attempts = attempts + 1
-        obj_mnem2 = Bip39MnemonicGenerator().FromWordsNumber(Bip39WordsNum.WORDS_NUM_12)
+        obj_mnem2 = Bip39MnemonicGenerator(language).FromWordsNumber(Bip39WordsNum.WORDS_NUM_12)
         str_mnem2 = obj_mnem2.ToStr()
         str_dbl = str_mnem1 + " " + str_mnem2
         valid = validator.IsValid(str_dbl)
@@ -81,20 +103,19 @@ def main():
     # fp2 = calc_fingerprint(obj_mnem2)
     # fpd = calc_fingerprint(phrase_dbl)
 
-    print(f"Seed phrase 1 = {obj_mnem1}")
+    print(f"Seed phrase 1 = {str_mnem1}")
     # print(f"Seed: {seed_one.hex()} .")
     # print(f"\tFingerprint: {fp1} \n")
 
-    print(f"Seed phrase 2 = {obj_mnem2}")
+    print(f"Seed phrase 2 = {str_mnem2}")
     # print(f"Seed: {seed_two.hex()} .")
     # print(f"\tFingerprint: {fp2} \n")
 
-    print(f"Double seed phrase = \n\t{obj_mnem1}\n\t{obj_mnem2}")
+    print(f"Double seed phrase = \n\t{str_mnem1}\n\t{str_mnem2}")
     # print(f"Seed: {seed_dbl.hex()} .")
     # print(f"\tFingerprint: {fpd} \n")
 
     print(f"\t\t\t{attempts} attempt(s) were made.\n")
-
     logging.info("Program terminated successfully.")
 
 if __name__ == "__main__":

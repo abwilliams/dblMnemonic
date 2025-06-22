@@ -1,17 +1,17 @@
 # Template for python project
  
-    python                      # project root directory
+    python                      # project root directory in file mnem2.py
     ├── .venv                   # virtual environmnent directory 
     ├── main.py                 # entry point for program 
     ├── modules                 # modules directory
     │   ├── __init__.py         # package file for modules
-    │   ├── module1.py          # example module
-    │   └── module2.py
+    │   ├── module1.py          ## example module
+    │   └── module2.py          ## XXXXX
     ├── tests                   # unit test directory
     │   ├── __init__.py
-    │   ├── test_module1.py     # example unit test module
-    │   └── test_module2.py
-    ├── README.md               # documentation file
+    │   ├── test_module1.py     ## example unit test module
+    │   └── test_module2.py     ## XXXXX
+    ├── README.md               # This documentation file
     └── requirements.txt        # list of python packages
  
 

@@ -1,9 +1,9 @@
  TODO
         Segregate fingerprint calculator into it's own module.
-        Correct README.md to represent current status! <== **important**.
+        Correct README.md to represent current status! <== **important**. 
+        Get first (language) argument working again.
         Remove second argument. It must always have a seed word length 12 for a 24 word double mnemonic!
         Change the description of the command-line arguments.
         Possibly improve algorythim to look for the last word of the last seed rather than brute force 
         the whole 12 words (or retain because it improves randomness!).
- 
  

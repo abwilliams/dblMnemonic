@@ -10,7 +10,7 @@ import logging
 import argparse
 import hashlib
 import hmac
-from bip_utils import Bip39MnemonicGenerator, Bip39SeedGenerator, Bip39WordsNum, Bip39Languages, Bip39MnemonicValidator
+from bip_utils import Bip39MnemonicGenerator, Bip39SeedGenerator, Bip39WordsNum, Bip39Languages, Bip39MnemonicValidator, Bip32Slip10Secp256k1
 
 # initialise logging - INFO, WARNING, ERROR, CRITICAL
 logging.basicConfig(
@@ -18,13 +18,6 @@ logging.basicConfig(
     format='%(asctime)s -%(levelname)s - %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S'
 )
-
-# language_list = [("en", "english"), ("es", "spanish"), ("fr", "french"), ("jp", "japanese"),
-#                  ("kr", "korean"), ("cn", "chinese_simplified"), ("zh", "chinese_traditional"), 
-#                  ("it", "italian"), ("cz", "czech"), ("pt", "portuguese"), ("ru", "russian")]
-language_list = [("en", "ENGLISH"), ("es", "SPANISH"), ("fr", "FRENCH"), ("jp", "JAPANESE"),
-                 ("kr", "KOREAN"), ("cn", "CHINESE_SIMPLIFIED"), ("zh", "CHINESE_TRADITIONAL"), 
-                 ("it", "ITALIAN"), ("cz", "CZECH"), ("pt", "PORTUGESE"), ("ru", "RUSSIAN")]
 
 language_map = {
     "en": Bip39Languages.ENGLISH,
@@ -39,9 +32,6 @@ language_map = {
     "pt": Bip39Languages.PORTUGUESE,
     # "ru": Bip39Languages.RUSSIAN
 }
-
-
-
 
 def check_list(selection, item_list):
     ''' 
@@ -66,6 +56,30 @@ def calc_fingerprint(sp, pp=""):
     fingerprint = hmac_hash[:4] # Extract the first 4 bytes as the fingerprint
     return fingerprint.hex()
 
+def get_seed_info(mnemonic: str, passphrase: str = ""):
+    ''' 
+    Returns the fingerprint (string) of the seed phrase.
+    Fingerprint MK PvtK PubK
+    Compatible with SeedSigner and Krux devices. 
+    '''
+    seed_bytes = Bip39SeedGenerator(mnemonic).Generate(passphrase)
+    # 2. Create BIP32 master key from seed (using secp256k1 curve)
+    bip32_master_key = Bip32Slip10Secp256k1.FromSeed(seed_bytes)
+    # 3. Get private key bytes (32 bytes)
+    priv_key_bytes = bip32_master_key.PrivateKey().Raw().ToBytes()
+    priv_key_hex = priv_key_bytes.hex()
+    # 4. Get compressed public key bytes
+    pub_key_bytes = bip32_master_key.PublicKey().RawCompressed().ToBytes()
+    pub_key_hex = pub_key_bytes.hex()
+    # 5. Compute fingerprint: first 4 bytes of RIPEMD160(SHA256(pubkey))
+    sha256_pubkey = hashlib.sha256(pub_key_bytes).digest()
+    ripemd160 = hashlib.new('ripemd160')
+    ripemd160.update(sha256_pubkey)
+    fingerprint = ripemd160.digest()[:4].hex()
+    # return "c84720a4"
+    return priv_key_hex, pub_key_hex, fingerprint
+
+
 def main():
     """
         This is the main function and entry-point of the program.
@@ -84,36 +98,37 @@ def main():
 
     obj_mnem1 = Bip39MnemonicGenerator(language).FromWordsNumber(Bip39WordsNum.WORDS_NUM_12)
     str_mnem1 = obj_mnem1.ToStr()
-
+    '''
+    Repeat guesses until a valid 12 word seed that matches the first (str_mnem1) is found.
+    '''
     attempts = 0
+    max_attempts = 10_000
     validator = Bip39MnemonicValidator()
-
-    '''
-    Keep cycling through attempts until a valid 12 word seed that matches the first (str_mnem1) is found.
-    '''
     valid = False
-    while ( not valid ):
+    while ( not valid and attempts < max_attempts ):
         attempts = attempts + 1
         obj_mnem2 = Bip39MnemonicGenerator(language).FromWordsNumber(Bip39WordsNum.WORDS_NUM_12)
         str_mnem2 = obj_mnem2.ToStr()
         str_dbl = str_mnem1 + " " + str_mnem2
         valid = validator.IsValid(str_dbl)
 
-    # fp1 = calc_fingerprint(obj_mnem1)
-    # fp2 = calc_fingerprint(obj_mnem2)
-    # fpd = calc_fingerprint(phrase_dbl)
+    fp1 = calc_fingerprint(str_mnem1)
+    fp2 = calc_fingerprint(str_mnem2)
+    fpd = calc_fingerprint(str_dbl)
+
+    pvtK1, pubK1, fp1 = get_seed_info(str_mnem1)
 
     print(f"Seed phrase 1 = {str_mnem1}")
     # print(f"Seed: {seed_one.hex()} .")
-    # print(f"\tFingerprint: {fp1} \n")
+    print(f"\tFingerprint: {fp1} \n")
 
     print(f"Seed phrase 2 = {str_mnem2}")
     # print(f"Seed: {seed_two.hex()} .")
-    # print(f"\tFingerprint: {fp2} \n")
+    print(f"\tFingerprint: {fp2} \n")
 
     print(f"Double seed phrase = \n\t{str_mnem1}\n\t{str_mnem2}")
     # print(f"Seed: {seed_dbl.hex()} .")
-    # print(f"\tFingerprint: {fpd} \n")
+    print(f"\tFingerprint: {fpd} \n")
 
     print(f"\t\t\t{attempts} attempt(s) were made.\n")
     logging.info("Program terminated successfully.")

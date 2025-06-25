@@ -44,21 +44,9 @@ def check_list(selection, item_list):
         else :
             None
 
-def calc_fingerprint(sp, pp=""):
-    '''
-    Calculate the fingerprint of a mnemonic given the seed phrase
-    and the passphrase. Returns the fingerprint in hex (4 bytes).
-    '''
-    data = sp + "\n" + pp       # Concatenate seed phrase + passphrase with separator
-    key = ("mnemonic" + pp).encode('utf-8')   # Create the key
-    sha256_hash = hashlib.sha256(data.encode('utf-8')).digest()     # SHA256 hash of data
-    hmac_hash = hmac.new(key, sha256_hash, hashlib.sha512).digest() # hash of data and key
-    fingerprint = hmac_hash[:4] # Extract the first 4 bytes as the fingerprint
-    return fingerprint.hex()
-
 def get_seed_info(mnemonic: str, passphrase: str = ""):
     ''' 
-    Returns the fingerprint (string) of the seed phrase.
+    Returns the fingerprint (string) of the seed phrase.bip32_master_key
     Fingerprint MK PvtK PubK
     Compatible with SeedSigner and Krux devices. 
     '''
@@ -76,9 +64,7 @@ def get_seed_info(mnemonic: str, passphrase: str = ""):
     ripemd160 = hashlib.new('ripemd160')
     ripemd160.update(sha256_pubkey)
     fingerprint = ripemd160.digest()[:4].hex()
-    # return "c84720a4"
     return priv_key_hex, pub_key_hex, fingerprint
-
 
 def main():
     """
@@ -112,22 +98,28 @@ def main():
         str_dbl = str_mnem1 + " " + str_mnem2
         valid = validator.IsValid(str_dbl)
 
-    fp1 = calc_fingerprint(str_mnem1)
-    fp2 = calc_fingerprint(str_mnem2)
-    fpd = calc_fingerprint(str_dbl)
-
     pvtK1, pubK1, fp1 = get_seed_info(str_mnem1)
+    pvtK2, pubK2, fp2 = get_seed_info(str_mnem2)
+    pvtKd, pubKd, fpd = get_seed_info(str_dbl)
 
-    print(f"Seed phrase 1 = {str_mnem1}")
-    # print(f"Seed: {seed_one.hex()} .")
+    print(" ")
+    print(f"Seed phrase 1: \n\t{str_mnem1}")
+    # print(f"Master Key:  {pvtK1} .")
+    print(f"Private Key: {pvtK1} .")
+    print(f"Public Key:  {pubK1} .")
     print(f"\tFingerprint: {fp1} \n")
 
-    print(f"Seed phrase 2 = {str_mnem2}")
-    # print(f"Seed: {seed_two.hex()} .")
+    print(f"Seed phrase 2: \n\t{str_mnem2}")
+    # print(f"Master Key:  {pvtK2} .")
+    print(f"Private Key: {pvtK2} .")
+    print(f"Public Key:  {pubK2} .")
     print(f"\tFingerprint: {fp2} \n")
 
-    print(f"Double seed phrase = \n\t{str_mnem1}\n\t{str_mnem2}")
-    # print(f"Seed: {seed_dbl.hex()} .")
+    # print(f"Double seed phrase: \n\t{str_dbl}")
+    print(f"Double seed phrase: \n\t{str_mnem1}\n\t{str_mnem2}")
+    # print(f"Master Key:  {pvtKd} .")
+    print(f"Private Key: {pvtKd} .")
+    print(f"Public Key:  {pubKd} .")
     print(f"\tFingerprint: {fpd} \n")
 
     print(f"\t\t\t{attempts} attempt(s) were made.\n")

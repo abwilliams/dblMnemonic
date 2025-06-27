@@ -65,6 +65,16 @@ def get_seed_info(mnemonic: str, passphrase: str = ""):
     fingerprint = ripemd160.digest()[:4].hex()
     return priv_key_hex, pub_key_hex, fingerprint
 
+def display_results(mnemonic, pvtKey, pubKey, fingerprint):
+    '''
+    Prints the provided key information.
+    '''
+    print(f"Seed phrase : \n\t{mnemonic}")
+    # print(f"Master Key :  {MasterKey} .")
+    print(f"Private Key : {pvtKey} .")
+    print(f"Public Key :  {pubKey} .")
+    print(f"\tFingerprint : {fingerprint} \n")
+
 def main():
     """
         This is the main function and entry-point of the program.
@@ -104,24 +114,9 @@ def main():
 
     # Display the results for each mnemonic
     print(" ")
-    print(f"Seed phrase 1: \n\t{str_mnem1}")
-    # print(f"Master Key:  {pvtK1} .")
-    print(f"Private Key: {pvtK1} .")
-    print(f"Public Key:  {pubK1} .")
-    print(f"\tFingerprint: {fp1} \n")
-
-    print(f"Seed phrase 2: \n\t{str_mnem2}")
-    # print(f"Master Key:  {pvtK2} .")
-    print(f"Private Key: {pvtK2} .")
-    print(f"Public Key:  {pubK2} .")
-    print(f"\tFingerprint: {fp2} \n")
-
-    # print(f"Double seed phrase: \n\t{str_dbl}")
-    print(f"Double seed phrase: \n\t{str_mnem1}\n\t{str_mnem2}")
-    # print(f"Master Key:  {pvtKd} .")
-    print(f"Private Key: {pvtKd} .")
-    print(f"Public Key:  {pubKd} .")
-    print(f"\tFingerprint: {fpd} \n")
+    display_results(str_mnem1, pvtK1, pubK1, fp1)
+    display_results(str_mnem2, pvtK2, pubK2, fp2)
+    display_results(str_dbl, pvtKd, pubKd, fpd)
 
     print(f"\t\t\t{attempts} attempt(s) were made.\n")
     logging.info("Program terminated successfully.")

@@ -84,6 +84,7 @@ def main():
     """
     parser = argparse.ArgumentParser(description="Create a Bitcoin pass phrase.")
     parser.add_argument('language', help='Language to be used [cn|cz|en|es|fr|it|jp|kr|pr|ru|zh].', type=str)
+    parser.add_argument('--passphrase', help='Optional passphrase that will act as extra mnemonic word.', type=str, default="")
     args = parser.parse_args()
 
     language = language_map.get(args.language.lower())

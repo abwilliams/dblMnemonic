@@ -9,7 +9,7 @@ This code is based around the *bip_utils* library
 import logging
 import argparse
 import hashlib
-import hmac
+# import hmac
 from bip_utils import Bip39MnemonicGenerator, Bip39SeedGenerator, Bip39WordsNum, Bip39Languages, Bip39MnemonicValidator, Bip32Slip10Secp256k1
 
 # initialise logging - INFO, WARNING, ERROR, CRITICAL
@@ -98,10 +98,12 @@ def main():
         str_dbl = str_mnem1 + " " + str_mnem2
         valid = validator.IsValid(str_dbl)
 
+    # Calculate the fingerprint; private and public keys of each mnemonic.
     pvtK1, pubK1, fp1 = get_seed_info(str_mnem1)
     pvtK2, pubK2, fp2 = get_seed_info(str_mnem2)
     pvtKd, pubKd, fpd = get_seed_info(str_dbl)
 
+    # Display the results for each mnemonic
     print(" ")
     print(f"Seed phrase 1: \n\t{str_mnem1}")
     # print(f"Master Key:  {pvtK1} .")
@@ -127,4 +129,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

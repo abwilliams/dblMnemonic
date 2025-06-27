@@ -9,7 +9,6 @@ This code is based around the *bip_utils* library
 import logging
 import argparse
 import hashlib
-# import hmac
 from bip_utils import Bip39MnemonicGenerator, Bip39SeedGenerator, Bip39WordsNum, Bip39Languages, Bip39MnemonicValidator, Bip32Slip10Secp256k1
 
 # initialise logging - INFO, WARNING, ERROR, CRITICAL

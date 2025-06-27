@@ -17,7 +17,12 @@
 
     Call unit tests with :           $ python -m unittest discover -s tests
     Call python program with :       $ python main.py    or    $ ./main.py
-    Create 'requirements.txt' with : $ point freeze > requirements.txt
+    Create a 'requirements.txt' :    $ pip freeze > requirements.txt
+    List current dependencies :      $ pip list
+    Uninstall a package :            $ pip uninstall packagename
+    Update pip :                     $ pip install --upgrade pip
+    Update packages :                $ pip install pip-review       # Installs pip-review first
+                                     $ pip-review --auto
     Install requirements with :      $ pip install -r requirements.txt 
     Create virtual environmnent :    $ python -m venv .venv
     Activate virtual environmnent :  $ source venv/bin/activate
